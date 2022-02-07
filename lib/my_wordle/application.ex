@@ -9,7 +9,7 @@ defmodule MyWordle.Application do
   def start(_type, _args) do
     children = [
       # Start the Ecto repository
-      MyWordle.Repo,
+      # MyWordle.Repo,
       # Start the Telemetry supervisor
       MyWordleWeb.Telemetry,
       # Start the PubSub system
