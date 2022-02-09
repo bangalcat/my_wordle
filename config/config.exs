@@ -7,9 +7,6 @@
 # General application configuration
 import Config
 
-config :my_wordle,
-  ecto_repos: [MyWordle.Repo]
-
 # Configures the endpoint
 config :my_wordle, MyWordleWeb.Endpoint,
   url: [host: "localhost"],
