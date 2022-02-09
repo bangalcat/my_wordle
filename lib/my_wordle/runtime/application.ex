@@ -8,8 +8,8 @@ defmodule MyWordle.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      # Start the Ecto repository
-      # MyWordle.Repo,
+      # Start The Game Server
+      MyWordle.Runtime.GameSupervisor,
       # Start the Telemetry supervisor
       MyWordleWeb.Telemetry,
       # Start the PubSub system
