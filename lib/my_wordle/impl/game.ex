@@ -25,14 +25,14 @@ defmodule MyWordle.Impl.Game do
   ## Example
 
   iex> Game.new_game("abcde")
-  %Game{turns_left: 6, game_status: :start, answer: 'abcde', used_charset: %{}, history_words: []}
+  %Game{turns_left: 6, game_status: :start, answer: 'ABCDE', used_charset: %{}, history_words: []}
 
   iex > Game.new_game("aa")
   {:error, :invalid_length}
 
   """
   def new_game do
-    new_game("words")
+    new_game(Dictionary.random_word())
   end
 
   @spec new_game(String.t()) :: t
@@ -40,6 +40,7 @@ defmodule MyWordle.Impl.Game do
     case validate_word(word) do
       {:ok, word} ->
         word
+        |> String.upcase()
         |> String.to_charlist()
         |> then(&%__MODULE__{answer: &1})
 
@@ -61,7 +62,7 @@ defmodule MyWordle.Impl.Game do
   """
   @spec make_move(t, String.t()) :: {t, map()}
   def make_move(game, guess_word) do
-    guess = String.to_charlist(guess_word)
+    guess = guess_word |> String.upcase() |> String.to_charlist()
 
     # used? impossible case
 
@@ -100,11 +101,14 @@ defmodule MyWordle.Impl.Game do
 
   defp merge_used_charset(prev_charset, charset) do
     Map.merge(prev_charset, charset, fn
-      c, :half, :half ->
-        {c, :half}
+      _c, :half, :half ->
+        :half
 
-      c, _, _ ->
-        {c, :match}
+      _c, :miss, :miss ->
+        :miss
+
+      _c, _, _ ->
+        :match
     end)
   end
 
@@ -112,14 +116,14 @@ defmodule MyWordle.Impl.Game do
 
   ## Example
 
-  iex> Game.guess_result('train', 'think')
-  {:missed, %{?t => :match, ?r => :miss, ?a => :miss, ?i => :half, ?n => :half}}
+  iex> Game.guess_result('TRAIN', 'THINK')
+  {:missed, %{?T => :match, ?R => :miss, ?A => :miss, ?I => :half, ?N => :half}}
 
-  iex> Game.guess_result('guess', 'brain')
-  {:missed, %{?g => :miss, ?u => :miss, ?e => :miss, ?s => :miss}}
+  iex> Game.guess_result('GUESS', 'BRAIN')
+  {:missed, %{?G => :miss, ?U => :miss, ?E => :miss, ?S => :miss}}
 
-  iex> Game.guess_result('think', 'think')
-  {:matched, %{?t => :match, ?h => :match, ?i => :match, ?n => :match, ?k => :match}}
+  iex> Game.guess_result('THINK', 'THINK')
+  {:matched, %{?T => :match, ?H => :match, ?I => :match, ?N => :match, ?K => :match}}
   """
   def guess_result(answer, answer), do: {:matched, Map.new(answer, &{&1, :match})}
 
@@ -142,16 +146,30 @@ defmodule MyWordle.Impl.Game do
 
   ############################################## 3
 
+  @doc """
+
+  ## Example
+
+
+  iex> Game.new_game() |> Game.tally()
+  %{game_status: :start, turns_left: 6, history_words: [], alphabet_map: ?A..?Z |> Map.new(&{&1, :none})}
+  """
   def tally(game) do
     %{
+      game_status: game.game_status,
       turns_left: game.turns_left,
       history_words: words_with_match_result(game),
-      used_charset: game.used_charset
+      alphabet_map: result_alphabet_map(game.used_charset)
     }
   end
 
   defp return_with_tally(game) do
     {game, tally(game)}
+  end
+
+  defp result_alphabet_map(used_charset) do
+    ?A..?Z
+    |> Map.new(&{&1, Map.get(used_charset, &1, :none)})
   end
 
   defp words_with_match_result(%__MODULE__{history_words: words, answer: answer}) do
