@@ -17,7 +17,7 @@ defmodule MyWordleWeb.Router do
   scope "/", MyWordleWeb do
     pipe_through :browser
 
-    get "/", PageController, :index
+    live "/game", GameLive.Game
   end
 
   # Other scopes may use custom stacks.

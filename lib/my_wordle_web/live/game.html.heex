@@ -1,0 +1,9 @@
+<div class="game-holder text-center" phx-window-keyup="make_move" id="game-holder">
+  <div class="my-3 place-self-center inline-flex items-center bg-white leading-none text-cyan-600 rounded p-2 shadow text-teal text-sm">
+    <span class="">
+    <%= game_status(@tally.game_status) %>
+    </span>
+  </div>
+  <.live_component module={__MODULE__.Board} tally={@tally} input={@input} id="board" />
+  <.live_component module={__MODULE__.Keyboard} alphabet_map={@tally.alphabet_map} id="keyboard"/>
+</div>
