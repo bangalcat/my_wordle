@@ -10,4 +10,8 @@ defmodule Dictionary.WordList do
     |> File.read!()
     |> String.split(" ", trim: true)
   end
+
+  def in_dictionary?(word, word_list) do
+    word in word_list
+  end
 end

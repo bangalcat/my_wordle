@@ -29,10 +29,14 @@ defmodule MyWordleWeb.GameLive.Game do
 
   def handle_event("make_move", %{"key" => "Enter"}, %{assigns: %{input: input}} = socket) do
     if :erlang.iolist_size(input) == 5 do
-      tally = MyWordle.make_move(socket.assigns.game, :erlang.iolist_to_binary(input))
+      case MyWordle.make_move(socket.assigns.game, :erlang.iolist_to_binary(input)) do
+        {:error, :not_found} ->
+          {:noreply, socket |> put_flash(:error, "Not found Word!") |> assign(:input, [])}
 
-      # Logger.debug(tally)
-      {:noreply, assign(socket, :tally, tally) |> assign(:input, [])}
+        tally ->
+          # Logger.debug(tally)
+          {:noreply, assign(socket, :tally, tally) |> clear_flash() |> assign(:input, [])}
+      end
     else
       {:noreply, socket}
     end
@@ -41,7 +45,7 @@ defmodule MyWordleWeb.GameLive.Game do
   def handle_event("make_move", %{"key" => key}, socket) do
     # Logger.debug("key: #{key}")
     input = normalize(socket.assigns.input, String.upcase(key))
-    {:noreply, assign(socket, :input, input)}
+    {:noreply, assign(socket, :input, input) |> clear_flash()}
   end
 
   def handle_event("make_move" = event, params, socket) do

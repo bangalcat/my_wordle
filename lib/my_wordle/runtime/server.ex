@@ -1,5 +1,5 @@
 defmodule MyWordle.Runtime.Server do
-  use GenServer
+  use GenServer, restart: :temporary
 
   alias MyWordle.Impl.Game
 
@@ -16,8 +16,16 @@ defmodule MyWordle.Runtime.Server do
   end
 
   def handle_call({:make_move, guess}, _from, game) do
-    {updated_game, tally} = Game.make_move(game, guess)
-    {:reply, tally, updated_game}
+    {updated_game, tally_or_error} =
+      case Game.make_move(game, guess) do
+        {:error, reason} ->
+          {game, {:error, reason}}
+
+        success_result ->
+          success_result
+      end
+
+    {:reply, tally_or_error, updated_game}
   end
 
   def handle_call({:tally}, _from, game) do

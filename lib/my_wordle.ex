@@ -16,7 +16,7 @@ defmodule MyWordle do
     pid
   end
 
-  @spec make_move(pid(), guess_word :: String.t()) :: Game.tally()
+  @spec make_move(pid(), guess_word :: String.t()) :: Game.tally() | {:error, atom()}
   def make_move(pid, guess_word) do
     GenServer.call(pid, {:make_move, guess_word})
   end

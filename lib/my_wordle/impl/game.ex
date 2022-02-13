@@ -3,6 +3,8 @@ defmodule MyWordle.Impl.Game do
   Game Management
   """
 
+  alias MyWordle.Dictionary
+
   @type t :: %__MODULE__{
           turns_left: integer(),
           game_status: game_status(),
@@ -57,6 +59,23 @@ defmodule MyWordle.Impl.Game do
   end
 
   defp validate_word(word) do
+    with {:ok, word} <- validate_length(word),
+         {:ok, word} <- validate_correct(word) do
+      {:ok, word}
+    end
+  end
+
+  defp validate_correct(word) do
+    case Dictionary.in_dictionary?(word) do
+      true ->
+        {:ok, word}
+
+      false ->
+        {:error, :not_found}
+    end
+  end
+
+  defp validate_length(word) do
     case String.length(word) do
       5 -> {:ok, word}
       _ -> {:error, :invalid_length}
@@ -67,16 +86,18 @@ defmodule MyWordle.Impl.Game do
   compare answer with guess word
   return new game state
   """
-  @spec make_move(t, String.t()) :: {t, map()}
+  @spec make_move(t, String.t()) :: {t, map()} | {:error, atom()}
   def make_move(game, guess_word) do
     guess = guess_word |> String.upcase() |> String.to_charlist()
 
     # used? impossible case
 
-    # guess result
-    guess_result(guess, game.answer)
-    |> score_guess(%{game | history_words: [guess | game.history_words]})
-    |> return_with_tally()
+    with {:ok, _word} <- validate_word(guess_word) do
+      # guess result
+      guess_result(guess, game.answer)
+      |> score_guess(%{game | history_words: [guess | game.history_words]})
+      |> return_with_tally()
+    end
   end
 
   defp score_guess({:matched, used_charset}, game) do

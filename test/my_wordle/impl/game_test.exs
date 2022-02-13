@@ -3,7 +3,23 @@ defmodule MyWordle.Impl.GameTest do
   use ExUnitProperties
   alias MyWordle.Impl.Game
 
+  import Mox
+
+  setup :verify_on_exit!
+
   doctest Game
+
+  setup _ do
+    MyWordle.Dictionary.Mock
+    |> stub(:in_dictionary?, fn word ->
+      true
+    end)
+    |> stub(:random_word, fn ->
+      "WORDS"
+    end)
+
+    :ok
+  end
 
   describe "new game" do
     property "make new game with 5 length word" do

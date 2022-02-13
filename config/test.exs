@@ -7,8 +7,7 @@ config :my_wordle, MyWordleWeb.Endpoint,
   secret_key_base: "PmU8++cTB9Hu3LQTZ8C/i0E8DzI9BeEuYXl+ni2xg4WsKsgfZTvCmjyuhJNrv39d",
   server: false
 
-# In test we don't send emails.
-config :my_wordle, MyWordle.Mailer, adapter: Swoosh.Adapters.Test
+config :my_wordle, :dictionary_client, MyWordle.Dictionary.Mock
 
 # Print only warnings and errors during test
 config :logger, level: :warn
