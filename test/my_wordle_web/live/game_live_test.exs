@@ -3,9 +3,11 @@ defmodule MyWordleWeb.GameLiveTest do
 
   import Phoenix.LiveViewTest
 
-  describe "game start", %{conn: conn} do
-    assert {:ok, view, html} = live(conn, "/game")
+  describe "game start" do
+    test "game start", %{conn: conn} do
+      assert {:ok, view, html} = live(conn, "/game")
 
-    assert html =~ ~r/Game Start/
+      assert html =~ ~r/Game Start/
+    end
   end
 end

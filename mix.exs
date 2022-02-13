@@ -47,7 +47,8 @@ defmodule MyWordle.MixProject do
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
       {:tailwind, "~> 0.1", runtime: Mix.env() == :dev},
-      {:stream_data, "~> 0.5.0", only: :test}
+      {:stream_data, "~> 0.5.0", only: :test},
+      {:dialyxir, "~> 1.0", only: [:dev, :test]}
     ]
   end
 

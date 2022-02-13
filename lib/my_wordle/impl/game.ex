@@ -10,6 +10,13 @@ defmodule MyWordle.Impl.Game do
           history_words: list(charlist())
         }
 
+  @type tally :: %{
+          turns_left: integer(),
+          game_status: game_status(),
+          alphabet_map: map(),
+          history_words: list({list(), char_status()})
+        }
+
   defstruct turns_left: 6,
             game_status: :start,
             answer: [],
@@ -18,7 +25,7 @@ defmodule MyWordle.Impl.Game do
             history_words: []
 
   @type game_status :: :start | :guess | :already_used | :won | :lost
-  @type char_status :: :unused | :missed | :match | :only_pos
+  @type char_status :: :none | :missed | :match | :half
 
   @doc """
 

@@ -5,6 +5,7 @@ defmodule MyWordle.Runtime.GameSupervisor do
     DynamicSupervisor.start_link(__MODULE__, init_arg, name: __MODULE__)
   end
 
+  @spec start_game() :: {:ok, pid()}
   def start_game do
     DynamicSupervisor.start_child(__MODULE__, MyWordle.Runtime.Server)
   end
