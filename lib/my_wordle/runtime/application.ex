@@ -8,6 +8,8 @@ defmodule MyWordle.Application do
   @impl true
   def start(_type, _args) do
     children = [
+      # Start Dictionary Server
+      Dictionary.Server,
       # Start The Game Server
       MyWordle.Runtime.GameSupervisor,
       # Start the Telemetry supervisor
