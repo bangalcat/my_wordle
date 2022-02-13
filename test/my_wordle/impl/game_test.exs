@@ -27,6 +27,7 @@ defmodule MyWordle.Impl.GameTest do
                 guesses <- uniq_list_of(string(?A..?Z, length: 5), length: 6),
                 word not in guesses do
         game = Game.new_game(word)
+        alphabets = guesses |> Enum.flat_map(&String.to_charlist/1) |> Enum.uniq()
 
         game =
           guesses
@@ -35,7 +36,11 @@ defmodule MyWordle.Impl.GameTest do
             game
           end)
 
-        assert %Game{turns_left: 0, game_status: :lost} = game
+        assert %Game{turns_left: 0, game_status: :lost, used_charset: used_charset} = game
+
+        for c <- alphabets do
+          assert used_charset[c]
+        end
       end
     end
 
@@ -83,6 +88,14 @@ defmodule MyWordle.Impl.GameTest do
                ],
                alphabet_map: alphabet_map
              } = tally
+
+      for {c, expect} <- Enum.zip('WORDS', List.duplicate(:match, 5)) do
+        assert alphabet_map[c] == expect
+      end
+
+      for c <- ?A..?Z, c not in 'WORDS' do
+        assert alphabet_map[c] == :none
+      end
     end
   end
 

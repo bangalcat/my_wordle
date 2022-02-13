@@ -6,7 +6,7 @@ defmodule MyWordle.Runtime.GameSupervisor do
   end
 
   def start_game do
-    DynamicSupervisor.start_child(__MODULE__, {MyWordle.Impl.Game, nil})
+    DynamicSupervisor.start_child(__MODULE__, MyWordle.Runtime.Server)
   end
 
   @impl true
