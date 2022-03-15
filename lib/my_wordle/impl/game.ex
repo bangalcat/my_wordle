@@ -86,7 +86,7 @@ defmodule MyWordle.Impl.Game do
   compare answer with guess word
   return new game state
   """
-  @spec make_move(t, String.t()) :: {t, map()} | {:error, atom()}
+  @spec make_move(t, String.t()) :: {t, map()} | {:error, :invalid_length} | {:error, :not_found}
   def make_move(game, guess_word) do
     guess = guess_word |> String.upcase() |> String.to_charlist()
 

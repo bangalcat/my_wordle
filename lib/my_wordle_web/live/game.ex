@@ -15,7 +15,7 @@ defmodule MyWordleWeb.GameLive.Game do
   def game_status(:won), do: "Congratulation! You Won!"
   def game_status(:lost), do: "Sorry, You Lose!"
   def game_status(:start), do: "Game Start"
-  def game_status(:guess), do: "Wrong!"
+  def game_status(:guess), do: "you guess"
 
   @impl true
   def handle_event("make_move", _, %{assigns: %{tally: %{game_status: status}}} = socket)
@@ -24,21 +24,23 @@ defmodule MyWordleWeb.GameLive.Game do
   end
 
   def handle_event("make_move", %{"key" => "Backspace"}, %{assigns: %{input: input}} = socket) do
-    {:noreply, assign(socket, :input, backspace(input))}
+    {:noreply, assign(socket, :input, backspace(input)) |> clear_flash()}
   end
 
   def handle_event("make_move", %{"key" => "Enter"}, %{assigns: %{input: input}} = socket) do
     if :erlang.iolist_size(input) == 5 do
       case MyWordle.make_move(socket.assigns.game, :erlang.iolist_to_binary(input)) do
         {:error, :not_found} ->
-          {:noreply, socket |> put_flash(:error, "Not found Word!") |> assign(:input, [])}
+          Process.send_after(self(), "clear_flash", 5000)
+          {:noreply, socket |> put_flash(:error, "Not found Word!")}
 
         tally ->
           # Logger.debug(tally)
           {:noreply, assign(socket, :tally, tally) |> clear_flash() |> assign(:input, [])}
       end
     else
-      {:noreply, socket}
+      Process.send_after(self(), "clear_flash", 5000)
+      {:noreply, socket |> put_flash(:error, "must be 5 characters")}
     end
   end
 
@@ -60,6 +62,14 @@ defmodule MyWordleWeb.GameLive.Game do
         handle_event(event, %{"key" => alphabet}, socket)
     end
   end
+
+  def handle_info("clear_flash", socket) do
+    {:noreply, socket |> clear_flash()}
+  end
+
+  #
+  # Helpers
+  #
 
   defp normalize(input, key) do
     if :erlang.iolist_size(input) >= 5 or not alphabet?(key) do

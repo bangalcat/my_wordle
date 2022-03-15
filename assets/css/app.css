@@ -12,9 +12,10 @@
   border-radius: 4px;
 }
 .alert-info {
-  color: #31708f;
+  @apply bg-blue-600 shadow-lg mx-auto w-96 max-w-full text-sm pointer-events-auto bg-clip-padding rounded-lg block mb-3
+  /* color: #31708f;
   background-color: #d9edf7;
-  border-color: #bce8f1;
+  border-color: #bce8f1; */;
 }
 .alert-warning {
   color: #8a6d3b;
@@ -22,12 +23,13 @@
   border-color: #faebcc;
 }
 .alert-danger {
-  color: #a94442;
+  @apply bg-red-600 shadow-lg mx-auto w-96 max-w-full text-sm pointer-events-auto bg-clip-padding rounded-lg block mb-3 text-white
+  /* color: #a94442;
   background-color: #f2dede;
-  border-color: #ebccd1;
+  border-color: #ebccd1; */;
 }
 .alert p {
-  margin-bottom: 0;
+  @apply self-center;
 }
 .alert:empty {
   display: none;
