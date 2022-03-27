@@ -4,19 +4,13 @@ defmodule MyWordle.Impl.Game do
   """
 
   alias MyWordle.Dictionary
+  alias MyWordle.GameType
 
   @type t :: %__MODULE__{
           turns_left: integer(),
-          game_status: game_status(),
-          used_charset: %{char() => char_status()},
+          game_status: GameType.game_status(),
+          used_charset: %{char() => GameType.char_status()},
           history_words: list(charlist())
-        }
-
-  @type tally :: %{
-          turns_left: integer(),
-          game_status: game_status(),
-          alphabet_map: map(),
-          history_words: list({list(), char_status()})
         }
 
   defstruct turns_left: 6,
@@ -25,9 +19,6 @@ defmodule MyWordle.Impl.Game do
             # used: %{match: [], mis_pos: [], miss: []},
             used_charset: %{},
             history_words: []
-
-  @type game_status :: :start | :guess | :already_used | :won | :lost
-  @type char_status :: :none | :missed | :match | :half
 
   @doc """
 
@@ -44,7 +35,7 @@ defmodule MyWordle.Impl.Game do
     new_game(Dictionary.random_word())
   end
 
-  @spec new_game(String.t()) :: t
+  @spec new_game(String.t()) :: t() | {:error, :invalid_length} | {:error, :not_found}
   def new_game(word) do
     case validate_word(word) do
       {:ok, word} ->
@@ -86,7 +77,8 @@ defmodule MyWordle.Impl.Game do
   compare answer with guess word
   return new game state
   """
-  @spec make_move(t, String.t()) :: {t, map()} | {:error, :invalid_length} | {:error, :not_found}
+  @spec make_move(t(), String.t()) ::
+          {t(), GameType.tally()} | {:error, :invalid_length} | {:error, :not_found}
   def make_move(game, guess_word) do
     guess = guess_word |> String.upcase() |> String.to_charlist()
 
@@ -153,6 +145,7 @@ defmodule MyWordle.Impl.Game do
       iex> Game.guess_result('THINK', 'THINK')
       {:matched, %{?T => :match, ?H => :match, ?I => :match, ?N => :match, ?K => :match}}
   """
+  @spec guess_result(charlist(), charlist()) :: {:matched, map()} | {:missed, map()}
   def guess_result(answer, answer), do: {:matched, Map.new(answer, &{&1, :match})}
 
   def guess_result(guess, answer) do
@@ -179,9 +172,15 @@ defmodule MyWordle.Impl.Game do
   ## Example
 
       iex> Game.new_game() |> Game.tally()
-      %{game_status: :start, turns_left: 6, history_words: [], alphabet_map: ?A..?Z |> Map.new(&{&1, :none})}
+      %{
+        game_status: :start,
+        turns_left: 6,
+        history_words: [],
+        alphabet_map: ?A..?Z |> Map.new(&{&1, :none})
+      }
   """
-  def tally(game) do
+  @spec tally(t()) :: GameType.tally()
+  def tally(%__MODULE__{} = game) do
     %{
       game_status: game.game_status,
       turns_left: game.turns_left,

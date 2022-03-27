@@ -1,6 +1,6 @@
 defmodule Dictionary.WordList do
   @spec random_word(list(String.t())) :: String.t()
-  def random_word(word_list) do
+  def random_word([h | _] = word_list) when is_binary(h) do
     Enum.random(word_list)
   end
 
@@ -11,7 +11,8 @@ defmodule Dictionary.WordList do
     |> String.split(" ", trim: true)
   end
 
-  def in_dictionary?(word, word_list) do
+  @spec in_dictionary?(String.t(), Enumerable.t()) :: boolean()
+  def in_dictionary?(word, word_list) when is_binary(word) do
     word in word_list
   end
 end

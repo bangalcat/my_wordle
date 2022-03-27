@@ -63,6 +63,7 @@ defmodule MyWordleWeb.GameLive.Game do
     end
   end
 
+  @impl true
   def handle_info("clear_flash", socket) do
     {:noreply, socket |> clear_flash()}
   end
