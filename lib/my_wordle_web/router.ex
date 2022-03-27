@@ -17,6 +17,7 @@ defmodule MyWordleWeb.Router do
   scope "/", MyWordleWeb do
     pipe_through :browser
 
+    resources "/", PageController, only: [:index]
     live "/game", GameLive.Game
   end
 
