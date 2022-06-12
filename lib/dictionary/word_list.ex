@@ -5,7 +5,7 @@ defmodule Dictionary.WordList do
   end
 
   def words_list do
-    "../../assets/dictionary/words.txt"
+    words_path()
     |> Path.expand(__DIR__)
     |> File.read!()
     |> String.split(" ", trim: true)
@@ -14,5 +14,10 @@ defmodule Dictionary.WordList do
   @spec in_dictionary?(String.t(), Enumerable.t()) :: boolean()
   def in_dictionary?(word, word_list) when is_binary(word) do
     word in word_list
+  end
+
+  defp words_path do
+    Application.get_env(:my_wordle, :words_path)
+    |> then(&Application.app_dir(:my_wordle, &1))
   end
 end

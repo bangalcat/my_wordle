@@ -45,6 +45,8 @@ config :tailwind,
 
 config :my_wordle, :dictionary_client, Dictionary
 
+config :my_wordle, :words_path, "priv/static/dictionary/words.txt"
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"
