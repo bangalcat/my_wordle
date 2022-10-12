@@ -28,7 +28,7 @@ defmodule MyWordle.Runtime.Server do
     {:reply, tally_or_error, updated_game}
   end
 
-  def handle_call({:tally}, _from, game) do
+  def handle_call(:tally, _from, game) do
     {:reply, Game.tally(game), game}
   end
 end

@@ -24,6 +24,6 @@ defmodule MyWordle do
 
   @spec tally(GenServer.server()) :: GameType.tally()
   def tally(pid) when is_pid(pid) do
-    GenServer.call(pid, {:tally})
+    GenServer.call(pid, :tally)
   end
 end
