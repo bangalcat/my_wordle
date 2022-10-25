@@ -17,7 +17,9 @@ defmodule Dictionary.WordList do
   end
 
   defp words_path do
+    app = Application.get_env(:my_wordle, :current_app, :my_wordle)
+
     Application.get_env(:my_wordle, :words_path)
-    |> then(&Application.app_dir(:my_wordle, &1))
+    |> then(&Application.app_dir(app, &1))
   end
 end
